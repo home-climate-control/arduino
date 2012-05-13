@@ -1,0 +1,6 @@
+This code is supposed to be built with at least Arduino-1.0.
+
+Best place to start: http://labs.arduino.cc/ADK/Index
+
+In order to build the code under Arduino, you will have to rename
+HCCAccessory.cpp to HCCAccessory.ino.
