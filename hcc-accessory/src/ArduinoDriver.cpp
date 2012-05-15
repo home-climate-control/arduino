@@ -21,7 +21,7 @@ void ArduinoDriver::process(Command *command) {
 
 	case SERVO:
 
-		setServo(channel, payload + 1000);
+		setServo(channel, payload);
 		break;
 
 	case RELAY:
