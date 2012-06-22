@@ -34,6 +34,7 @@ AndroidAccessory acc(
 		ACCESSORY_SERIAL);
 
 void setup();
+void setAnalogReference();
 void loop();
 void read();
 void write();
@@ -58,10 +59,43 @@ void setup() {
 	Serial.println(ACCESSORY_SERIAL);
 	Serial.println(ACCESSORY_URL);
 
+	setAnalogReference();
+
 	// This will never be freed
 	drivers[0] = new ArduinoDriver();
 
 	acc.powerOn();
+}
+
+void setAnalogReference() {
+
+	// Setting analog reference to 1.1V will restrict the top measurable temperature to just
+	// 43.3°C for LM34 and 60°C for TMP36. This will provide the best temperature resolution
+	// and quality of control, though.
+
+	// Setting it to 2.56V will restrict top measurable temperature to 124.4°C for LM34
+	// and 206°C for TMP36 - more than enough for casual use.
+
+	analogReference(INTERNAL1V1);
+
+	// http://arduino.cc/it/Reference/AnalogReference says:
+	//
+	//     After changing the analog reference, the first few readings from analogRead() may not be accurate.
+	//
+	// To counter this, let's spend some time settling (it appears that first few reads are inaccurate
+	// even if the reference voltage hasn't been changed)
+
+	long start = millis();
+
+	do {
+
+		for (int address = A0; address < A0 + 6; address++) {
+
+			analogRead(address);
+		}
+
+		// Apparently, 100ms is enough
+	} while (millis() - start < 100);
 }
 
 void loop() {
